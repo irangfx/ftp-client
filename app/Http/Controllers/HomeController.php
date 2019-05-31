@@ -25,7 +25,6 @@ class HomeController extends Controller
 
         $list = $this->getFilesList();
         $this->downloadFiles($list);
-        $this->prepareFiles($list);
         $this->uploadFiles($list);
 
         return $list;
@@ -57,18 +56,6 @@ class HomeController extends Controller
 
             if (!Storage::disk('local')->exists($localPath))
                 dispatch(new DownloadFileFromFTPJob($file, $localPath));
-        }
-    }
-
-    private function prepareFiles(array $files)
-    {
-        foreach ($files as $file) {
-            $newFileName = str_replace('tarhan.ir', 'irangfx.com', basename($file));
-            $command = 'cd ' . storage_path('app/tmp') . '; ./rar-extractor.sh "' . basename($file) . '" "' . $newFileName . '"';
-            $process = new Process($command);
-            $process->run();
-            if (!$process->isSuccessful())
-                throw new ProcessFailedException($process);
         }
     }
 
