@@ -77,7 +77,7 @@ class HomeController extends Controller
     {
         foreach ($files as $file) {
             $newName = str_replace('tarhan.ir', 'irangfx.com', $file);
-            if (Storage::disk('local')->exists('tmp/' . DIRECTORY_SEPARATOR . $newName))
+            if (Storage::disk('local')->exists('tmp/' . DIRECTORY_SEPARATOR . basename($newName)))
                 $this->localToFtp->copy(
                     'local://tmp/' . DIRECTORY_SEPARATOR . basename($newName),
                     'ftp://' . $newName
