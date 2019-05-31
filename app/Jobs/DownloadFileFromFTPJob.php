@@ -52,6 +52,6 @@ class DownloadFileFromFTPJob implements ShouldQueue
     public function handle()
     {
         $this->mountManager->copy("ftp://{$this->ftpPath}", "local://{$this->localPath}");
-        dispatch(new PrepareArchiveJob($this->localPath));
+        dispatch(new PrepareArchiveJob($this->localPath, $this->ftpPath));
     }
 }

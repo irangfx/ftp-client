@@ -24,19 +24,25 @@ class PrepareArchiveJob implements ShouldQueue
     /**
      * @var string
      */
-    private $fileName;
+    private $localPath;
+    /**
+     * @var string
+     */
+    private $ftpPath;
 
     /**
      * Create a new job instance.
      *
-     * @param string $fileName
+     * @param string $localPath
+     * @param string $ftpPath
      */
-    public function __construct(string $fileName)
+    public function __construct(string $localPath, string $ftpPath)
     {
-        $this->fileName = $fileName;
+        $this->ftpPath = $ftpPath;
+        $this->localPath = $localPath;
 
-        $this->oldName = basename($fileName);
-        $this->newName = str_replace('tarhan.ir', 'irangfx.com', $this->oldName);;
+        $this->oldName = basename($localPath);
+        $this->newName = str_replace('tarhan.ir', 'irangfx.com', $this->oldName);
     }
 
     /**
@@ -52,5 +58,6 @@ class PrepareArchiveJob implements ShouldQueue
         $process->run();
         if (!$process->isSuccessful())
             throw new ProcessFailedException($process);
+        dispatch(new UploadFileToFTPJob($this->localPath, $this->ftpPath));
     }
 }
