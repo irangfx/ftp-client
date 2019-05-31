@@ -22,17 +22,12 @@ class DownloadFileFromFTPJob implements ShouldQueue
      */
     private $ftpPath;
     /**
-     * @var MountManager
-     */
-    private $mountManager;
-
-    /**
      * Create a new job instance.
      *
-     * @param string $localPath
      * @param string $ftpPath
+     * @param string $localPath
      */
-    public function __construct(string $localPath, string $ftpPath)
+    public function __construct(string $ftpPath, string $localPath)
     {
         $this->ftpPath = $ftpPath;
         $this->localPath = $localPath;
@@ -42,6 +37,11 @@ class DownloadFileFromFTPJob implements ShouldQueue
             'local' => Storage::disk('local')->getDriver()
         ]);
     }
+
+    /**
+     * @var MountManager
+     */
+    private $mountManager;
 
     /**
      * Execute the job.

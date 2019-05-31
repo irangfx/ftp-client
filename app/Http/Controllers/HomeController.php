@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\DownloadFileFromFTPJob;
 use Illuminate\Http\Request;
 use League\Flysystem\MountManager;
 use Illuminate\Support\Facades\Storage;
@@ -54,10 +55,8 @@ class HomeController extends Controller
         foreach ($files as $file) {
             $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($file);
 
-            if (!Storage::disk('local')->exists($localPath)) {
-                \Log::info($localPath);
-                $this->ftpToLocal->copy("ftp://{$file}", "local://{$localPath}");
-            }
+            if (!Storage::disk('local')->exists($localPath))
+                dispatch(new DownloadFileFromFTPJob($file, $localPath));
         }
     }
 
