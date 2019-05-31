@@ -31,8 +31,10 @@ class HomeController extends Controller
         foreach ($files as $file) {
             $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($file);
 
-            if (!Storage::disk('local')->exists($localPath))
+            if (!Storage::disk('local')->exists($localPath)) {
+                \Log::info("Download => {$file}");
                 dispatch(new DownloadFileFromFTPJob($file, $localPath));
+            }
         }
     }
 }
