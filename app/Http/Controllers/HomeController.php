@@ -18,6 +18,7 @@ class HomeController extends Controller
         $list = $this->getFilesList();
         $this->downloadFiles($list);
         $this->prepareFiles($list);
+        $this->uploadFiles($list);
         return $list;
     }
 
@@ -45,6 +46,16 @@ class HomeController extends Controller
             $process->run();
             if (!$process->isSuccessful())
                 throw new ProcessFailedException($process);
+        }
+    }
+
+    private function uploadFiles(array $files)
+    {
+        foreach ($files as $file) {
+            $newName = str_replace('tarhan.ir', 'irangfx.com', $file);
+            Storage::disk('ftp')->put($newName,
+                Storage::disk('local')->get('tmp/' . DIRECTORY_SEPARATOR . basename($newName))
+            );
         }
     }
 }
