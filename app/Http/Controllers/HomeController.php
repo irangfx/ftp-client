@@ -24,9 +24,9 @@ class HomeController extends Controller
         $this->init();
 
         $list = $this->getFilesList();
-        $this->downloadFiles($list);
-        $this->prepareFiles($list);
-        $this->uploadFiles($list);
+//        $this->downloadFiles($list);
+//        $this->prepareFiles($list);
+//        $this->uploadFiles($list);
 
         return $list;
     }
@@ -53,10 +53,11 @@ class HomeController extends Controller
     private function downloadFiles(array $files)
     {
         foreach ($files as $file) {
-            $this->ftpToLocal->copy(
-                'ftp://' . $file,
-                'local://tmp/' . DIRECTORY_SEPARATOR . basename($file)
-            );
+            if (!Storage::disk('local')->exists('tmp/' . DIRECTORY_SEPARATOR . basename($file)))
+                $this->ftpToLocal->copy(
+                    'ftp://' . $file,
+                    'local://tmp/' . DIRECTORY_SEPARATOR . basename($file)
+                );
         }
     }
 
@@ -76,10 +77,11 @@ class HomeController extends Controller
     {
         foreach ($files as $file) {
             $newName = str_replace('tarhan.ir', 'irangfx.com', $file);
-            $this->localToFtp->copy(
-                'local://tmp/' . DIRECTORY_SEPARATOR . basename($newName),
-                'ftp://' . $newName
-            );
+            if (Storage::disk('local')->exists('tmp/' . DIRECTORY_SEPARATOR . $newName))
+                $this->localToFtp->copy(
+                    'local://tmp/' . DIRECTORY_SEPARATOR . basename($newName),
+                    'ftp://' . $newName
+                );
         }
     }
 }
