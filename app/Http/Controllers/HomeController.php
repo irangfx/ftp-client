@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class HomeController extends Controller
 {
@@ -15,6 +17,7 @@ class HomeController extends Controller
     {
         $list = $this->getFilesList();
         $this->downloadFiles($list);
+        $this->prepareFiles($list);
         return $list;
     }
 
@@ -30,6 +33,18 @@ class HomeController extends Controller
             Storage::disk('local')->put('tmp/' . DIRECTORY_SEPARATOR . basename($file),
                 Storage::disk('ftp')->get($file)
             );
+        }
+    }
+
+    private function prepareFiles(array $files)
+    {
+        foreach ($files as $file) {
+            $newFileName = str_replace('tarhan.ir', 'irangfx.com', basename($file));
+            $command = 'cd ' . storage_path('app/tmp') . '; ./rar-extractor.sh ' . basename($file) . ' ' . $newFileName;
+            $process = new Process($command);
+            $process->run();
+            if (!$process->isSuccessful())
+                throw new ProcessFailedException($process);
         }
     }
 }
