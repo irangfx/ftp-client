@@ -24,9 +24,9 @@ class HomeController extends Controller
         $this->init();
 
         $list = $this->getFilesList();
-//        $this->downloadFiles($list);
-//        $this->prepareFiles($list);
-//        $this->uploadFiles($list);
+        $this->downloadFiles($list);
+        $this->prepareFiles($list);
+        $this->uploadFiles($list);
 
         return $list;
     }
