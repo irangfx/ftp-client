@@ -15,6 +15,9 @@ class HomeController extends Controller
 
     public function index()
     {
+        $this->basePath = request()->get('path');
+        if ($this->basePath === '') return '';
+
         $list = $this->getFilesList();
         $this->downloadFiles($list);
         $this->prepareFiles($list);
@@ -41,7 +44,7 @@ class HomeController extends Controller
     {
         foreach ($files as $file) {
             $newFileName = str_replace('tarhan.ir', 'irangfx.com', basename($file));
-            $command = 'cd ' . storage_path('app/tmp') . '; ./rar-extractor.sh ' . basename($file) . ' ' . $newFileName;
+            $command = 'cd ' . storage_path('app/tmp') . '; ./rar-extractor.sh "' . basename($file) . '"" "' . $newFileName . '"';
             $process = new Process($command);
             $process->run();
             if (!$process->isSuccessful())
