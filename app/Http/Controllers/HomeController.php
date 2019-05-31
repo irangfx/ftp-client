@@ -53,11 +53,10 @@ class HomeController extends Controller
     private function downloadFiles(array $files)
     {
         foreach ($files as $file) {
-            if (!Storage::disk('local')->exists('tmp/' . DIRECTORY_SEPARATOR . basename($file)))
-                $this->ftpToLocal->copy(
-                    'ftp://' . $file,
-                    'local://tmp/' . DIRECTORY_SEPARATOR . basename($file)
-                );
+            $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($file);
+
+            if (!Storage::disk('local')->exists($localPath))
+                $this->ftpToLocal->copy("ftp://{$file}", "local://{$localPath}");
         }
     }
 
@@ -76,12 +75,11 @@ class HomeController extends Controller
     private function uploadFiles(array $files)
     {
         foreach ($files as $file) {
-            $newName = str_replace('tarhan.ir', 'irangfx.com', $file);
-            if (Storage::disk('local')->exists('tmp/' . DIRECTORY_SEPARATOR . basename($newName)))
-                $this->localToFtp->copy(
-                    'local://tmp/' . DIRECTORY_SEPARATOR . basename($newName),
-                    'ftp://' . $newName
-                );
+            $ftpPath = str_replace('tarhan.ir', 'irangfx.com', $file);
+            $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($ftpPath);
+
+            if (Storage::disk('local')->exists($localPath) && !Storage::disk('ftp')->exists($ftpPath))
+                $this->localToFtp->copy("local://{$localPath}", "ftp://{$ftpPath}");
         }
     }
 }
