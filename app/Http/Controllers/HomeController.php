@@ -34,8 +34,8 @@ class HomeController extends Controller
     private function downloadFiles(array $files)
     {
         foreach ($files as $file) {
-            Storage::disk('local')->put('tmp/' . DIRECTORY_SEPARATOR . basename($file),
-                Storage::disk('ftp')->get($file)
+            Storage::disk('local')->writeStream('tmp/' . DIRECTORY_SEPARATOR . basename($file),
+                Storage::disk('ftp')->readStream($file)
             );
         }
     }
