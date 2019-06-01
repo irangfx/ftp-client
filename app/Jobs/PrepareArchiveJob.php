@@ -55,6 +55,7 @@ class PrepareArchiveJob implements ShouldQueue
         $storagePath = storage_path('app/tmp');
         $command = "cd {$storagePath}; ./rar-extractor.sh '{$this->oldName}' '{$this->newName}'";
         $process = new Process($command);
+        $process->setTimeout(null);
         $process->run();
         if (!$process->isSuccessful())
             throw new ProcessFailedException($process);
