@@ -31,11 +31,6 @@ class DownloadFileFromFTPJob implements ShouldQueue
     {
         $this->ftpPath = $ftpPath;
         $this->localPath = $localPath;
-
-        $this->mountManager = new MountManager([
-            'ftp' => Storage::disk('ftp')->getDriver(),
-            'local' => Storage::disk('local')->getDriver()
-        ]);
     }
 
     /**
@@ -47,12 +42,15 @@ class DownloadFileFromFTPJob implements ShouldQueue
      * Execute the job.
      *
      * @return void
-     * @throws \League\Flysystem\FileExistsException
+     * @throws \Illuminate\Contracts\Filesystem\FileExistsException
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function handle()
     {
         \Log::info("Downloading => " . basename($this->ftpPath));
-        $this->mountManager->copy("ftp://{$this->ftpPath}", "local://{$this->localPath}");
+        Storage::disk('local')->writeStream($this->localPath,
+            Storage::disk('ftp')->readStream($this->ftpPath)
+        );
         \Log::info("Download Finish => " . basename($this->ftpPath));
         dispatch(new PrepareArchiveJob($this->localPath, $this->ftpPath));
     }
