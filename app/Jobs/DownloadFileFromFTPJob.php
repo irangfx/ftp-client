@@ -2,7 +2,10 @@
 
 namespace App\Jobs;
 
+use Log;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Filesystem\FileExistsException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,24 +37,19 @@ class DownloadFileFromFTPJob implements ShouldQueue
     }
 
     /**
-     * @var MountManager
-     */
-    private $mountManager;
-
-    /**
      * Execute the job.
      *
      * @return void
-     * @throws \Illuminate\Contracts\Filesystem\FileExistsException
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws FileExistsException
+     * @throws FileNotFoundException
      */
     public function handle()
     {
-        \Log::info("Downloading => " . basename($this->ftpPath));
+        Log::info("Downloading => " . basename($this->ftpPath));
         Storage::disk('local')->writeStream($this->localPath,
             Storage::disk('ftp')->readStream($this->ftpPath)
         );
-        \Log::info("Download Finish => " . basename($this->ftpPath));
+        Log::info("Download Finish => " . basename($this->ftpPath));
         dispatch(new PrepareArchiveJob($this->localPath, $this->ftpPath));
     }
 }

@@ -3,12 +3,13 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Filesystem\FileExistsException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Storage;
-use League\Flysystem\MountManager;
 
 class UploadFileToFTPJob implements ShouldQueue
 {
@@ -21,10 +22,6 @@ class UploadFileToFTPJob implements ShouldQueue
      * @var string
      */
     private $localPath;
-    /**
-     * @var MountManager
-     */
-    private $mountManager;
 
     /**
      * Create a new job instance.
@@ -36,22 +33,20 @@ class UploadFileToFTPJob implements ShouldQueue
     {
         $this->ftpPath = str_replace('tarhan.ir', 'irangfx.com', $ftpPath);
         $this->localPath = str_replace('tarhan.ir', 'irangfx.com', $localPath);
-
-        $this->mountManager = new MountManager([
-            'ftp' => Storage::disk('ftp')->getDriver(),
-            'local' => Storage::disk('local')->getDriver()
-        ]);
     }
 
     /**
      * Execute the job.
      *
      * @return void
-     * @throws \League\Flysystem\FileExistsException
+     * @throws FileExistsException
+     * @throws FileNotFoundException
      */
     public function handle()
     {
         if (Storage::disk('local')->exists($this->localPath) && !Storage::disk('ftp')->exists($this->ftpPath))
-            $this->mountManager->copy("local://{$this->localPath}", "ftp://{$this->ftpPath}");
+            Storage::disk('ftp')->writeStream($this->ftpPath,
+                Storage::disk('local')->readStream($this->localPath)
+            );
     }
 }
