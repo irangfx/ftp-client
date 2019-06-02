@@ -57,11 +57,12 @@ process () {
   extract "$1" "$dir" "$program"
 }
 
+oldDir=${1%.*}
 newDir=${2%.*}
 
-mv $1 $2
-process "$2";
-rm $2
+process "$1";
+rm $1
+mv ${oldDir} ${newDir}
 cd ${newDir}
 sed 's+www.tarhan.ir/academy+irangfx.com+g' Tarhan.ir.url > IranGFX.com.url
 rm Tarhan.ir.url
