@@ -41,7 +41,7 @@ class MakeBackupFileToFTPJob implements ShouldQueue
     public function handle()
     {
         if (!Storage::disk('ftp')->exists("{$this->ftpPath}.back")) {
-            Storage::disk('ftp')->copy($this->ftpPath, "{$this->ftpPath}.back");
+            Storage::disk('ftp')->move($this->ftpPath, "{$this->ftpPath}.back");
             dispatch(new UploadFileToFTPJob($this->localPath, $this->ftpPath));
         }
     }
