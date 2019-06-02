@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\DownloadFileFromFTPJob;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
-    private $basePath = '/imap/pz10448.parspack.net/public_html/premium/New/';
+    private $basePath = '';
 
     public function index()
     {
@@ -20,10 +21,15 @@ class HomeController extends Controller
         return $list;
     }
 
+    /**
+     * @return array
+     */
     private function getFilesList(): array
     {
         $files = Storage::disk('ftp')->allFiles($this->basePath);
-        return $files;
+        return array_filter($files, function ($file) {
+            return preg_match('/\.(zip|rar)$/', $file);
+        });
     }
 
     private function startProcess(array $files)
