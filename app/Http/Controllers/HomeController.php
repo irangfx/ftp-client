@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
-    private $basePath = '';
+    private $basePath = null;
 
     public function index()
     {
         $this->basePath = request()->get('path');
-        if ($this->basePath === '') return '';
+        if ($this->basePath === null) return '';
 
         $list = $this->getFilesList();
         $this->startProcess($list);
@@ -28,7 +28,7 @@ class HomeController extends Controller
     {
         $files = Storage::disk('ftp')->allFiles($this->basePath);
         return array_filter($files, function ($file) {
-            return preg_match('/\.(zip|rar)$/', $file);
+            return preg_match('/\.(zip|rar)$/', $file) && !preg_match('/\irangfx\.com/', $file);
         });
     }
 
