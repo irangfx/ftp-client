@@ -60,6 +60,11 @@ class PrepareArchiveJob implements ShouldQueue
         $process->run();
         if (!$process->isSuccessful())
             throw new ProcessFailedException($process);
-        dispatch(new UploadFileToFTPJob($this->localPath, $this->ftpPath));
+
+        if (preg_match('/tarhan\.ir/', $this->ftpPath))
+            dispatch(new UploadFileToFTPJob($this->localPath, $this->ftpPath));
+        else
+            dispatch(new MakeBackupFileToFTPJob($this->localPath, $this->ftpPath));
+
     }
 }

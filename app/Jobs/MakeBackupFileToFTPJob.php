@@ -7,6 +7,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Storage;
 
 class MakeBackupFileToFTPJob implements ShouldQueue
 {
@@ -39,6 +40,9 @@ class MakeBackupFileToFTPJob implements ShouldQueue
      */
     public function handle()
     {
-        //
+        if (!Storage::disk('ftp')->exists("{$this->ftpPath}.back")) {
+            Storage::disk('ftp')->copy($this->ftpPath, "{$this->ftpPath}.back");
+            dispatch(new UploadFileToFTPJob($this->localPath, $this->ftpPath));
+        }
     }
 }
