@@ -32,7 +32,9 @@ class UploadFileToFTPJob implements ShouldQueue
     public function __construct(string $localPath, string $ftpPath)
     {
         $this->ftpPath = str_replace('tarhan.ir', 'irangfx.com', $ftpPath);
+        $this->ftpPath = str_replace('.zip', '.rar', $this->ftpPath);
         $this->localPath = str_replace('tarhan.ir', 'irangfx.com', $localPath);
+        $this->localPath = str_replace('.zip', '.rar', $this->localPath);
     }
 
     /**
@@ -44,9 +46,10 @@ class UploadFileToFTPJob implements ShouldQueue
      */
     public function handle()
     {
-        if (Storage::disk('local')->exists($this->localPath) && !Storage::disk('ftp')->exists($this->ftpPath))
+        if (Storage::disk('local')->exists($this->localPath) && !Storage::disk('ftp')->exists($this->ftpPath)) {
             Storage::disk('ftp')->writeStream($this->ftpPath,
                 Storage::disk('local')->readStream($this->localPath)
             );
+        }
     }
 }

@@ -43,7 +43,7 @@ class PrepareArchiveJob implements ShouldQueue
 
         $this->oldName = basename($localPath);
         $this->newName = str_replace('tarhan.ir', 'irangfx.com', $this->oldName);
-        $this->newName = str_replace('.zip', '.rar', $this->oldName);
+        $this->newName = str_replace('.zip', '.rar', $this->newName);
     }
 
     /**
