@@ -64,6 +64,7 @@ process "$1";
 rm $1
 mv ${oldDir} ${newDir}
 cp IranGFX.com.url ${newDir}
+rm ${newDir}/TarHan.ir.url
 rm ${newDir}/Tarhan.ir.url
 rar -p${newPassword} a -r -rr5 $2 ./${newDir}
 rm -rf ${newDir}
