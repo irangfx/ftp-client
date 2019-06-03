@@ -63,9 +63,7 @@ newDir=${2%.*}
 process "$1";
 rm $1
 mv ${oldDir} ${newDir}
-cd ${newDir}
-sed 's+www.tarhan.ir/academy+irangfx.com+g' Tarhan.ir.url > IranGFX.com.url
-rm Tarhan.ir.url
-cd ..
+cp IranGFX.com.url ${newDir}
+rm ${newDir}/Tarhan.ir.url
 rar -p${newPassword} a -r -rr5 $2 ./${newDir}
 rm -rf ${newDir}
