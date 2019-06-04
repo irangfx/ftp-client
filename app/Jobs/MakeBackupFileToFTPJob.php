@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Storage;
 
-class MakeBackupFileToFTPJob implements ShouldQueue
+class MakeBackupFileToFTPJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     /**

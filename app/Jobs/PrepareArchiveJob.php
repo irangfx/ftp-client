@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class PrepareArchiveJob implements ShouldQueue
+class PrepareArchiveJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     /**
