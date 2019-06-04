@@ -50,6 +50,7 @@ class UploadFileToFTPJob implements ShouldQueue
             Storage::disk('ftp')->writeStream($this->ftpPath,
                 Storage::disk('local')->readStream($this->localPath)
             );
+            Storage::disk('local')->delete($this->localPath);
         }
     }
 }
