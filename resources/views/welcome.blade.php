@@ -18,7 +18,7 @@
             @csrf
             <div class="form-group">
                 <label for="exampleInputEmail1">Path</label>
-                <input type="email" class="form-control" id="exampleInputEmail1"
+                <input name="path" class="form-control" id="exampleInputEmail1"
                        placeholder="public_html/premium/png/Abstract-Painted-Vectors.tarhan.ir.rar">
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
