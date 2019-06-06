@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use Log;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\FileExistsException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -45,10 +45,16 @@ class DownloadFileFromFTPJob implements ShouldQueue
     public function handle()
     {
         Log::info("Downloading => " . basename($this->ftpPath));
-        Storage::disk('local')->writeStream($this->localPath,
-            Storage::disk('ftp')->readStream($this->ftpPath)
-        );
-        Log::info("Download Finish => " . basename($this->ftpPath));
+
+        if (!Storage::disk('local')->exists($this->localPath)) {
+            Storage::disk('local')->writeStream($this->localPath,
+                Storage::disk('ftp')->readStream($this->ftpPath)
+            );
+            Log::info("Download Finish => " . basename($this->ftpPath));
+        } else {
+            Log::info("Download Ignored => " . basename($this->ftpPath));
+        }
+
         dispatch(new PrepareArchiveJob($this->localPath, $this->ftpPath));
     }
 }
