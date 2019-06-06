@@ -24,8 +24,7 @@ class HomeController extends Controller
     public function single()
     {
         $ftpPath = request()->get('path');
-        if ($this->basePath === null) return '';
-
+        if ($ftpPath === null) return '';
 
         if (Storage::disk('ftp')->exists($ftpPath)) {
             $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($ftpPath);
