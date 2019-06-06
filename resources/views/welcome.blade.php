@@ -13,8 +13,8 @@
 </head>
 <body>
 <div class="container">
-    <div class="flex-center position-ref full-height">
-        <form method="POST" action="{{ route('download') }}">
+    <div class="d-flex align-items-center justify-content-center">
+        <form method="POST" action="{{ route('download') }}" class="w-75">
             @csrf
             <div class="form-group">
                 <label for="exampleInputEmail1">Path</label>
