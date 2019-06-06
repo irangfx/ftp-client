@@ -53,8 +53,8 @@ class UploadFileToFTPJob
                 Storage::disk('local')->readStream($this->localPath)
             );
             Log::info('Finish Upload archive file => ' . basename($this->localPath));
+            Storage::disk('local')->delete($this->localPath);
+            Log::info('Delete Upload archive file => ' . basename($this->localPath));
         }
-        Storage::disk('local')->delete($this->localPath);
-        Log::info('Delete Upload archive file => ' . basename($this->localPath));
     }
 }
