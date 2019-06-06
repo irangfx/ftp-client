@@ -21,6 +21,21 @@ class HomeController extends Controller
         return $list;
     }
 
+    public function single()
+    {
+        $ftpPath = request()->get('path');
+        if ($this->basePath === null) return '';
+
+
+        if (Storage::disk('ftp')->exists($ftpPath)) {
+            $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($ftpPath);
+            dispatch(new DownloadFileFromFTPJob($ftpPath, $localPath));
+            return $ftpPath;
+        }
+
+        return '';
+    }
+
     /**
      * @return array
      */
