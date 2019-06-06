@@ -46,6 +46,11 @@ class DownloadFileFromFTPJob implements ShouldQueue
     {
         Log::info("Downloading => " . basename($this->ftpPath));
 
+        if (Storage::disk('ftp')->exists(str_replace('tarhan.ir', 'irangfx.com', $this->ftpPath))) {
+            Log::info("Cancel Process => " . basename($this->ftpPath));
+            return;
+        }
+
         if (!Storage::disk('local')->exists($this->localPath)) {
             Storage::disk('local')->writeStream($this->localPath,
                 Storage::disk('ftp')->readStream($this->ftpPath)
