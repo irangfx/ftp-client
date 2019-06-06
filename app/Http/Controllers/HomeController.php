@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\DownloadFileFromFTPJob;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
@@ -26,7 +27,9 @@ class HomeController extends Controller
         $ftpPath = request()->get('path');
         if ($ftpPath === null) return '';
 
+        Log::info('Check File Exist => ' . $ftpPath);
         if (Storage::disk('ftp')->exists($ftpPath)) {
+            Log::info('File Exist => ' . $ftpPath);
             $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($ftpPath);
             dispatch(new DownloadFileFromFTPJob($ftpPath, $localPath));
             return $ftpPath;
