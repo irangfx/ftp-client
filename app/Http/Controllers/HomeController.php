@@ -27,15 +27,9 @@ class HomeController extends Controller
         $ftpPath = request()->get('path');
         if ($ftpPath === null) return '';
 
-        Log::info('Check File Exist => ' . $ftpPath);
-        if (Storage::disk('ftp')->exists($ftpPath)) {
-            Log::info('File Exist => ' . $ftpPath);
-            $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($ftpPath);
-            dispatch(new DownloadFileFromFTPJob($ftpPath, $localPath));
-            return $ftpPath;
-        }
-
-        return '';
+        $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($ftpPath);
+        dispatch(new DownloadFileFromFTPJob($ftpPath, $localPath));
+        return $ftpPath;
     }
 
     /**
