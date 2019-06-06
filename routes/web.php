@@ -11,5 +11,10 @@
 |
 */
 
+
+use Illuminate\Support\Facades\Route;
+
 Route::get('/', 'HomeController@index');
+
 Route::get('single', 'HomeController@single');
+Route::post('single', 'HomeController@download')->name('download');

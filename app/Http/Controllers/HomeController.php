@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\DownloadFileFromFTPJob;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -20,16 +21,6 @@ class HomeController extends Controller
         $this->startProcess($list);
 
         return $list;
-    }
-
-    public function single()
-    {
-        $ftpPath = request()->get('path');
-        if ($ftpPath === null) return '';
-
-        $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($ftpPath);
-        dispatch(new DownloadFileFromFTPJob($ftpPath, $localPath));
-        return $ftpPath;
     }
 
     /**
@@ -53,5 +44,22 @@ class HomeController extends Controller
                 dispatch(new DownloadFileFromFTPJob($file, $localPath));
             }
         }
+    }
+
+    public function single()
+    {
+        return view('welcome');
+    }
+
+    public function download(Request $request)
+    {
+        $this->validate($request, [
+            'path' => 'required'
+        ]);
+
+        $ftpPath = request()->get('path');
+        $localPath = 'tmp/' . DIRECTORY_SEPARATOR . basename($ftpPath);
+        dispatch(new DownloadFileFromFTPJob($ftpPath, $localPath));
+        return $ftpPath;
     }
 }
