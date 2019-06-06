@@ -7,6 +7,8 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -53,18 +55,26 @@ class PrepareArchiveJob
      */
     public function handle()
     {
-        $storagePath = storage_path('app/tmp');
+        $storagePath = storage_path('app/tmp/');
+
+        Log::info('Start Convert file from `' . $this->oldName .'` to => ' . $this->newName);
+
+        if (Storage::disk('local')->exists($storagePath . $this->newName))
+            Storage::disk('local')->delete($storagePath . $this->newName);
+
         $command = "cd {$storagePath}; ./rar-extractor.sh '{$this->oldName}' '{$this->newName}'";
         $process = new Process($command);
         $process->setTimeout(null);
         $process->run();
+
         if (!$process->isSuccessful())
             throw new ProcessFailedException($process);
+
+        Log::info('Finished Convert archive file => ' . $this->newName);
 
         if (preg_match('/tarhan\.ir/', $this->ftpPath))
             dispatch(new UploadFileToFTPJob($this->localPath, $this->ftpPath));
         else
             dispatch(new MakeBackupFileToFTPJob($this->localPath, $this->ftpPath));
-
     }
 }
