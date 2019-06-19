@@ -60,9 +60,9 @@ process () {
 oldDir=${1%.*}
 newDir=${2%.*}
 
-process "$1";
-rm $1
-mv ${oldDir} ${newDir}
+mv $1 $2
+process $2;
+rm $2
 cp IranGFX.com.url ${newDir}
 rm ${newDir}/TarHan.ir.url
 rm ${newDir}/Tarhan.ir.url
